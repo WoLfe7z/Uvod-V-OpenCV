@@ -19,7 +19,16 @@ def prestej_piklse_z_barvo_koze(slika, barva_koze) -> int:
     pass
 
 def doloci_barvo_koze(slika,levo_zgoraj,desno_spodaj) -> tuple:
-    pass
+    roi = slika[levo_zgoraj[1]:desno_spodaj[1], levo_zgoraj[1]:desno_spodaj[0]]
+
+    #Preverimo ce je izrezano obmocje
+    if roi.size == 0:
+        print("Napaka: Izrezana regija je prazna.")
+        return None
+    
+    #izracun povprecne barve
+    povprecna_barva = np.mean(roi, axis=(0,1))
+    return povprecna_barva
 
 if __name__ == '__main__':
     #Pripravi kamero
@@ -60,7 +69,11 @@ if __name__ == '__main__':
         y2 = y1 + square_size
 
         #Klic funkcije za izracun barve koze
-        povprecna_barca = doloci_barvo_koze(slika, (x1, y1), (x2, y2))
+        povprecna_barva = doloci_barvo_koze(slika, (x1, y1), (x2, y2))
+
+        if povprecna_barva is not None:
+            print(f"povprecna barva: {povprecna_barva}")
+            
 
     #Zajemaj slike iz kamere in jih obdeluj     
     
