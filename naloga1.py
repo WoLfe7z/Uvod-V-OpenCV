@@ -73,10 +73,29 @@ if __name__ == '__main__':
 
         if povprecna_barva is not None:
             print(f"povprecna barva: {povprecna_barva}")
-            
 
-    #Zajemaj slike iz kamere in jih obdeluj     
-    
+        #Zajemaj slike iz kamere in jih obdeluj     
+        kamera = cv.VideoCapture(0)
+        if not kamera.isOpened():
+            print('Kamera ni bila odprta.')
+        else:
+            while True:
+                # Preberemo sliko iz kamere
+                ret1, slika1 = kamera.read()
+                cv.imshow('Kamera', slika1)
+
+                # Če pritisnemo tipko 'q', shranimo prvo sliko in zapremo okno
+                if cv.waitKey(1) & 0xFF == ord('q'):
+                    neobdelana_slika = slika1
+                    break
+        kamera.release()
+        cv.destroyAllWindows()
+
+        sirina_skatle, visina_skatle = 50, 50
+        rezultat = obdelaj_sliko_s_skatlami(neobdelana_slika, sirina_skatle, visina_skatle, povprecna_barva)
+
+
+
     #Označi območja (škatle), kjer se nahaja obraz (kako je prepuščeno vaši domišljiji)
         #Vprašanje 1: Kako iz števila pikslov iz vsake škatle določiti celotno območje obraza (Floodfill)?
         #Vprašanje 2: Kako prešteti število ljudi?
