@@ -19,9 +19,6 @@ def prestej_piklse_z_barvo_koze(slika, barva_koze) -> int:
     pass
 
 def doloci_barvo_koze(slika,levo_zgoraj,desno_spodaj) -> tuple:
-    '''Ta funkcija se kliče zgolj 1x na prvi sliki iz kamere. 
-    Vrne barvo kože v območju ki ga definira oklepajoča škatla (levo_zgoraj, desno_spodaj).
-      Način izračuna je prepuščen vaši domišljiji.'''
     pass
 
 if __name__ == '__main__':
@@ -43,7 +40,27 @@ if __name__ == '__main__':
         # Zapremo okno
         kamera.release()
         cv.destroyAllWindows()
+
     #Izračunamo barvo kože na prvi sliki
+    slika = cv.imread('.utils/prva_slika.jpg')
+    if slika is None:
+        print('Slika ni bila naložena.')
+    else:
+        print('Slika je bila naložena.')
+
+        #Pridobimo dimenzije slike
+        height, width, _  = slika.shape
+        #Velikost kvadrata (1/8 velikost slike)
+        square_size = min(height, width) // 8
+
+        #Izracun koordinat sredinskega kvadrata
+        x1 = (width // 2) - (square_size // 2)
+        y1 = (height // 2) - (square_size // 2)
+        x2 = x1 + square_size
+        y2 = y1 + square_size
+
+        #Klic funkcije za izracun barve koze
+        povprecna_barca = doloci_barvo_koze(slika, (x1, y1), (x2, y2))
 
     #Zajemaj slike iz kamere in jih obdeluj     
     
