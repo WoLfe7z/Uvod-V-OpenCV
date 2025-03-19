@@ -110,7 +110,7 @@ if __name__ == '__main__':
         rezultat = obdelaj_sliko_s_skatlami(neobdelana_slika, sirina_skatle, visina_skatle, povprecna_barva)
 
         print(rezultat)
-        cv.imshow("obdelana slika", neobdelana_slika)
+        cv.imshow("Slika s skatlami", neobdelana_slika)
         cv.waitKey(0)
         cv.destroyAllWindows()
 
