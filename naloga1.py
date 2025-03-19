@@ -7,12 +7,11 @@ def zmanjsaj_sliko(slika, sirina, visina):
 def obdelaj_sliko_s_skatlami(slika, sirina_skatle, visina_skatle, barva_koze) -> list:
     height, width, _ = slika.shape
     
-    spodnja_meja = np.array(barva_koze) - 30
-    zgornja_meja = np.array(barva_koze) + 30
+    spodnja_meja, zgornja_meja = barva_koze
     
-    #Preverimo, da so vrednosti znotraj mej (omejimo jih na 0-255)
-    spodnja_meja = np.clip(spodnja_meja, 0, 255)
-    zgornja_meja = np.clip(zgornja_meja, 0, 255)
+    #Dodamo mejo 35 obema
+    spodnja_meja = np.clip(spodnja_meja - 10, 0, 255)
+    zgornja_meja = np.clip(zgornja_meja + 10, 0, 255)
 
     maska = np.all(np.logical_and(spodnja_meja <= slika, slika <= zgornja_meja), axis=-1)
 
@@ -33,10 +32,9 @@ def obdelaj_sliko_s_skatlami(slika, sirina_skatle, visina_skatle, barva_koze) ->
     return rezultat
 
 def prestej_piklse_z_barvo_koze(slika, barva_koze) -> int:
-    spodnja_meja = np.array(barva_koze) - 35
-    zgornja_meja = np.array(barva_koze) + 35
-    spodnja_meja = np.clip(spodnja_meja, 0, 255)
-    zgornja_meja = np.clip(zgornja_meja, 0, 255)
+    spodnja_meja, zgornja_meja = barva_koze
+    spodnja_meja = np.clip(spodnja_meja - 35, 0, 255)
+    zgornja_meja = np.clip(zgornja_meja + 35, 0, 255)
 
     maska = np.all(np.logical_and(spodnja_meja <= slika, slika <= zgornja_meja), axis=-1)
 
@@ -52,7 +50,10 @@ def doloci_barvo_koze(slika,levo_zgoraj,desno_spodaj) -> tuple:
     #izracun povprecne barve
     povprecna_barva = np.mean(roi, axis=(0,1))
 
-    return povprecna_barva
+    spodnja_meja = np.clip(povprecna_barva, 0, 255)
+    zgornja_meja = np.clip(povprecna_barva, 0, 255)
+
+    return (spodnja_meja, zgornja_meja)
 
 if __name__ == '__main__':
     #Pripravi kamero
@@ -118,14 +119,6 @@ if __name__ == '__main__':
             cv.destroyAllWindows()
 
         kamera.release()
-        cv.destroyAllWindows()
-
-        sirina_skatle, visina_skatle = 40, 40
-        rezultat = obdelaj_sliko_s_skatlami(neobdelana_slika, sirina_skatle, visina_skatle, povprecna_barva)
-
-        print(rezultat)
-        cv.imshow("Slika s skatlami", neobdelana_slika)
-        cv.waitKey(0)
         cv.destroyAllWindows()
         #Vprašanje 1: Kako iz števila pikslov iz vsake škatle določiti celotno območje obraza (Floodfill)?
         #Vprašanje 2: Kako prešteti število ljudi?
