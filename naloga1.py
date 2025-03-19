@@ -33,8 +33,16 @@ def obdelaj_sliko_s_skatlami(slika, sirina_skatle, visina_skatle, barva_koze) ->
     return rezultat
 
 def prestej_piklse_z_barvo_koze(slika, barva_koze) -> int:
-    '''Prestej število pikslov z barvo kože v škatli.'''
-    pass
+    spodnja_meja = np.array(barva_koze) - 30
+    zgornja_meja = np.array(barva_koze) + 30
+    
+    #Preverimo, da so vrednosti znotraj mej (omejimo jih na 0-255)
+    spodnja_meja = np.clip(spodnja_meja, 0, 255)
+    zgornja_meja = np.clip(zgornja_meja, 0, 255)
+
+    maska = np.all(np.logical_and(spodnja_meja <= slika, slika <= zgornja_meja), axis=-1)
+    stevilo_pikslov_koze = np.sum(maska) 
+    return stevilo_pikslov_koze
 
 def doloci_barvo_koze(slika,levo_zgoraj,desno_spodaj) -> tuple:
     x1, y1 = levo_zgoraj
@@ -112,6 +120,10 @@ if __name__ == '__main__':
         kamera.release()
         cv.destroyAllWindows()
 
+        slika_zmanjsana = zmanjsaj_sliko(slika1, 200, 200)
+        cv.imshow("Zmanjsano" ,slika_zmanjsana)
+        cv.waitKey(0)
+        cv.destroyAllWindows()
     #Označi območja (škatle), kjer se nahaja obraz (kako je prepuščeno vaši domišljiji)
         #Vprašanje 1: Kako iz števila pikslov iz vsake škatle določiti celotno območje obraza (Floodfill)?
         #Vprašanje 2: Kako prešteti število ljudi?
