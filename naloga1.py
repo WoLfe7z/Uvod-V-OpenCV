@@ -2,14 +2,13 @@ import cv2 as cv
 import numpy as np
 
 def zmanjsaj_sliko(slika, sirina, visina):
-    '''Zmanjšaj sliko na velikost sirina x visina.'''
-    pass
+    return cv.resize(slika, (sirina, visina))
 
 def obdelaj_sliko_s_skatlami(slika, sirina_skatle, visina_skatle, barva_koze) -> list:
     height, width, _ = slika.shape
     
-    spodnja_meja = np.array(barva_koze) - 35
-    zgornja_meja = np.array(barva_koze) + 35
+    spodnja_meja = np.array(barva_koze) - 30
+    zgornja_meja = np.array(barva_koze) + 30
     
     #Preverimo, da so vrednosti znotraj mej (omejimo jih na 0-255)
     spodnja_meja = np.clip(spodnja_meja, 0, 255)
@@ -97,7 +96,9 @@ if __name__ == '__main__':
         if povprecna_barva is not None:
             print(f"povprecna barva: {povprecna_barva}")
 
-        #Zajemaj slike iz kamere in jih obdeluj     
+        #Zajemaj slike iz kamere in jih obdeluj
+        sirina_skatle, visina_skatle = 40, 40
+   
         kamera = cv.VideoCapture(0)
         if not kamera.isOpened():
             print('Kamera ni bila odprta.')
@@ -107,23 +108,25 @@ if __name__ == '__main__':
                 ret1, slika1 = kamera.read()
                 cv.imshow('Kamera', slika1)
 
+                rezultat = obdelaj_sliko_s_skatlami(slika1, sirina_skatle, visina_skatle, povprecna_barva)
+                cv.imshow("Slika s skatlami", slika1)
                 # Če pritisnemo tipko 'q', shranimo prvo sliko in zapremo okno
                 if cv.waitKey(1) & 0xFF == ord('q'):
-                    neobdelana_slika = slika1
                     break
+
+            cv.waitKey(0)
+            cv.destroyAllWindows()
+
         kamera.release()
         cv.destroyAllWindows()
 
         sirina_skatle, visina_skatle = 40, 40
-        
-        stevilo_pikslov = prestej_piklse_z_barvo_koze(neobdelana_slika, povprecna_barva)
         rezultat = obdelaj_sliko_s_skatlami(neobdelana_slika, sirina_skatle, visina_skatle, povprecna_barva)
 
-    #Označi območja (škatle), kjer se nahaja obraz (kako je prepuščeno vaši domišljiji)
+        print(rezultat)
         cv.imshow("Slika s skatlami", neobdelana_slika)
         cv.waitKey(0)
         cv.destroyAllWindows()
-
         #Vprašanje 1: Kako iz števila pikslov iz vsake škatle določiti celotno območje obraza (Floodfill)?
         #Vprašanje 2: Kako prešteti število ljudi?
 
